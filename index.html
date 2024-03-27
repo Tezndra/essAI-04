@@ -1,0 +1,96 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>essAI</title>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" /> -->
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container container">
+            <input type="checkbox" name="" id="" />
+            <div class="hamburger-lines">
+                <span class="line line1"></span>
+                <span class="line line2"></span>
+                <span class="line line3"></span>
+            </div>
+            <ul class="menu-items">
+                <li><a href="">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Developers</a></li>
+            </ul>
+            <h1 class="logo">ESSAI</h1>
+        </div>
+    </nav>
+    <section class="home_section">
+        <div class="contact-form">
+            <h2>Essay Evaluation</h2>
+            <form action="/evaluate" method="POST">
+                <div class="form-group">
+                    <label for="essay_title">Essay Title:</label><br>
+                    <input type="text" id="essay_title" name="essay_title" required>
+                </div>
+                <div class="form-group">
+                    <label for="essay">Essay:</label><br>
+                    <textarea id="essay" name="essay" rows="14" required></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Evaluate</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <!-- Add placeholders for evaluation results -->
+    <div id="evaluation-results" style="display: none;">
+        <h2>Evaluation Results</h2>
+        <p><strong>Grade:</strong> <span id="grade"></span></p>
+        <p><strong>Relevance:</strong> <span id="relevance"></span></p>
+        <p><strong>Errors:</strong> <span id="errors"></span></p>
+        <p><strong>Feedback:</strong> <span id="feedback"></span></p>
+        <p><strong>Improvised Essay:</strong></p>
+        <p><span id="improvised-essay"></span></p>
+    </div>
+
+    <section class="about_section"></section>
+    <section class="home_section"></section>
+    <section class="home_section"></section>
+    <section class="home_section"></section>
+
+    <!-- Add JavaScript to display evaluation results when the form is submitted -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector("form").addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Submit the form data asynchronously using Fetch API
+                fetch('/evaluate', {
+                    method: 'POST',
+                    body: new FormData(this)
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Extract evaluation results from the response
+                    const results = JSON.parse(data);
+                    if (results.error) {
+                        console.error(results.error); // Log any errors
+                        return;
+                    }
+
+                    // Display evaluation results on the page
+                    document.getElementById("grade").innerText = results.grade;
+                    document.getElementById("relevance").innerText = results.relevance;
+                    document.getElementById("errors").innerText = results.errors;
+                    document.getElementById("feedback").innerText = results.feedback;
+                    document.getElementById("improvised-essay").innerText = results.improvised_essay;
+                    document.getElementById("evaluation-results").style.display = "block"; // Show the results
+                })
+                .catch(error => console.error(error)); // Log any fetch errors
+            });
+        });
+    </script>
+</body>
+</html>
